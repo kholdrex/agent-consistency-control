@@ -49,4 +49,5 @@ OPENROUTER_KEY_FILE) and cost a few cents; `agentcc timing local` needs a runnin
 
 ## Data and licences
 
-AQuA-RAT (Apache 2.0), commit 26b64ed1, by Ling et al. (2017). Code: MIT. Results and figures: CC BY 4.0.
+AQuA-RAT (Apache 2.0), commit 26b64ed1, by Ling et al. (2017); see THIRD_PARTY_NOTICES.md. Code: MIT (LICENSE). Data,
+results and figures: CC BY 4.0 (LICENSES/CC-BY-4.0.txt).

@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite it as below. Code: MIT; data and results: CC BY 4.0; AQuA-RAT and model outputs keep their own terms (THIRD_PARTY_NOTICES.md)."
+title: "Consistency control for language-model agents in adaptive assessment: code and data"
+authors:
+  - family-names: Kholodniak
+    given-names: Oleksandr
+    orcid: "https://orcid.org/0009-0000-1012-7361"
+    affiliation: "National Aerospace University \"Kharkiv Aviation Institute\""
+version: 1.0.0
+date-released: 2026-10-17
+license: MIT
+repository-code: "https://github.com/kholdrex/agent-consistency-control"
+keywords:
+  - language-model agents
+  - concurrency control
+  - adaptive assessment
+  - discrete-event simulation
