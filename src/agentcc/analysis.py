@@ -108,33 +108,44 @@ def quality(path):
 
 
 def figure(cell_rows, path):
+    """Fig. 1 of the paper at print width (17 cm): TVF (a, b) and 95th percentile latency (c, d) by correction rate."""
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    import matplotlib.ticker as ticker
 
-    styles = {"C1": ("o", "-", "0.0"), "C2": ("s", "--", "0.35"), "C3": ("^", ":", "0.6")}
-    names = {"C1": "C1 state only", "C2": "C2 optimistic", "C3": "C3 pessimistic"}
-    loads = sorted({r["load"] for r in cell_rows})
-    fig, axes = plt.subplots(2, len(loads), figsize=(6.7, 4.4), sharex=True)
-    for j, ld in enumerate(loads):
+    styles = {"C1": ("o", "-", "0.0"), "C2": ("s", "--", "0.3"), "C3": ("^", ":", "0.45")}
+    names = {"C1": "C1, state only", "C2": "C2, optimistic", "C3": "C3, pessimistic"}
+    plt.rcParams.update({"font.family": "Times New Roman", "font.size": 11})
+    fig, axes = plt.subplots(2, 2, figsize=(17 / 2.54, 11.5 / 2.54), sharex=True)
+    plain = ticker.FuncFormatter(lambda v, _: f"{v:g}")
+    for j, ld in enumerate((0.5, 0.85)):
         for c, (mk, ls, col) in styles.items():
             rs = sorted((r for r in cell_rows if r["load"] == ld and r["condition"] == c and r["lambda"] > 0),
                         key=lambda r: r["lambda"])
             x = [r["lambda"] for r in rs]
-            axes[0, j].plot(x, [100 * r["tvf"][0] for r in rs], marker=mk, ls=ls, color=col, label=names[c], ms=4)
-            axes[1, j].plot(x, [r["latency_p95"][0] for r in rs], marker=mk, ls=ls, color=col, ms=4)
-        axes[0, j].set_title(f"Utilisation {ld}", fontsize=9)
-        axes[1, j].set_xlabel("Corrections per object-hour", fontsize=8)
+            axes[0, j].plot(x, [100 * r["tvf"][0] for r in rs], marker=mk, ls=ls, color=col, label=names[c], ms=5,
+                            lw=1.4)
+            axes[1, j].plot(x, [r["latency_p95"][0] for r in rs], marker=mk, ls=ls, color=col, ms=5, lw=1.4)
+        axes[0, j].set_title(f"({'ab'[j]}) utilisation {ld}", fontsize=11)
+        axes[1, j].set_title(f"({'cd'[j]}) utilisation {ld}", fontsize=11)
+        axes[1, j].set_xlabel("Corrections per object-hour")
+        if ld == 0.85:
+            axes[1, j].set_yscale("log")
+        axes[1, j].yaxis.set_major_formatter(plain)
+        axes[1, j].yaxis.set_minor_formatter(ticker.NullFormatter())
         for i in range(2):
             axes[i, j].set_xscale("log")
-            axes[i, j].tick_params(labelsize=7)
+            axes[i, j].set_xticks([0.05, 0.5, 5, 50])
+            axes[i, j].xaxis.set_major_formatter(plain)
+            axes[i, j].xaxis.set_minor_formatter(ticker.NullFormatter())
             axes[i, j].grid(alpha=0.3, lw=0.5)
-    axes[0, 0].set_ylabel("Timely valid feedback, %", fontsize=8)
-    axes[1, 0].set_ylabel("95th percentile latency, s", fontsize=8)
-    axes[0, 0].legend(fontsize=7, frameon=False)
+    axes[0, 0].set_ylabel("Timely valid feedback, %")
+    axes[1, 0].set_ylabel("Latency p95, s")
+    axes[0, 0].legend(frameon=False, fontsize=10)
     fig.tight_layout()
-    fig.savefig(path, dpi=300)
+    fig.savefig(path, dpi=600)
 
 
 def report(root: Path):

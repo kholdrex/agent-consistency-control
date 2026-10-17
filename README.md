@@ -36,11 +36,12 @@ Python 3.10+ and [uv](https://docs.astral.sh/uv/):
 
 ```
 uv venv && uv pip install -e ".[dev]"
-agentcc corpus          # downloads AQuA-RAT at the pinned commit into data/raw (not redistributed)
-agentcc grid            # about 6 minutes on an Apple M1 Pro
-agentcc grid --world W2
-agentcc report
-pytest
+.venv/bin/agentcc corpus                       # downloads AQuA-RAT at the pinned commit into data/raw (not redistributed)
+.venv/bin/agentcc grid                         # about 6 minutes on an Apple M1 Pro
+.venv/bin/agentcc grid --world W2
+.venv/bin/agentcc grid --repair-pass-prob 0    # sensitivity: repeated validation always fails
+.venv/bin/agentcc report                       # results/summary.json and figures/operating_map.png (Fig. 1 of the paper)
+.venv/bin/pytest
 ```
 
 `agentcc timing api` and `agentcc quality` call the OpenRouter API (key file ~/.config/qos-llm/openrouter.key or the path in
