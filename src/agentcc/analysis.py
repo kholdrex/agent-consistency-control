@@ -144,6 +144,11 @@ def report(root: Path):
     if w2_path.exists():
         w2 = load_rows(w2_path)
         out["w2"] = {"primary": primary(w2), "checks": checks(w2), "contrasts": contrasts(w2)}
+    s_path = root / "results/sim/grid_api_W1_repair0.jsonl"
+    if s_path.exists():
+        s = load_rows(s_path)
+        out["sensitivity_repair0"] = {"primary": primary(s), "checks": checks(s), "cells": cells(s),
+                                      "contrasts": contrasts(s)}
     q = root / "results/quality/api.jsonl"
     if q.exists():
         out["quality"] = quality(q)

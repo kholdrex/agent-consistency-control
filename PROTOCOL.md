@@ -113,5 +113,9 @@ ZNO and WebFAQ data; earlier measurements.
 
 Any change after the first evaluation run is listed here with its date and reason.
 
-- 2026-10-17: src/agentcc/analysis.py (primary contrast, cell table, checks, figure) and src/agentcc/quality.py were written after the
-  freeze and before any evaluation result was read; they implement sections 6 and 7 as written.
+- 2026-10-17: src/agentcc/analysis.py (primary contrast, cell table, checks, figure) was written after the freeze and before any
+  evaluation result was read; it implements section 6 as written. src/agentcc/quality.py is part of the frozen state (tag
+  protocol-freeze).
+- 2026-10-17, after an external review of the results: an exploratory sensitivity analysis assumes that the repeated validation after a
+  repair always fails (Config.repair_pass_prob = 0), because a model run at temperature 0 tends to repeat its output; the main analysis
+  is unchanged. Results: results/sim/grid_api_W1_repair0.jsonl.

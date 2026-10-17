@@ -48,7 +48,8 @@ def summarise(rows, extra):
     }
 
 
-def run_grid(corpus, timing: Timing, out: Path, world="W1", conditions=("C1", "C2", "C3"), seeds=SEEDS):
+def run_grid(corpus, timing: Timing, out: Path, world="W1", conditions=("C1", "C2", "C3"), seeds=SEEDS,
+             repair_pass_prob=None, tag=""):
     deps = corpus_deps(corpus)
     n_passages = len(corpus["passages"])
     out.mkdir(parents=True, exist_ok=True)
@@ -59,12 +60,13 @@ def run_grid(corpus, timing: Timing, out: Path, world="W1", conditions=("C1", "C
             for c in conds:
                 for s in seeds:
                     cfg = Config(condition=c, seed=s, world=world, rho_item=lam, rho_passage=lam,
-                                 n_learners=learners, n_items=len(deps), n_passages=n_passages, workers=WORKERS)
+                                 n_learners=learners, n_items=len(deps), n_passages=n_passages, workers=WORKERS,
+                                 repair_pass_prob=repair_pass_prob)
                     req, extra = simulate(cfg, timing, deps)
                     receipt = check(req, extra, c)
                     rows.append({"timing": timing.name, "world": world, "load": load, "learners": learners,
                                  "lambda": lam, "condition": c, "seed": s, **summarise(req, extra),
                                  **{f"audit_{k}": v for k, v in receipt.items()}})
-    path = out / f"grid_{timing.name}_{world}.jsonl"
+    path = out / f"grid_{timing.name}_{world}{tag}.jsonl"
     path.write_text("".join(json.dumps(r) + "\n" for r in rows))
     return path

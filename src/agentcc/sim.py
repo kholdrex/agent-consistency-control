@@ -57,6 +57,7 @@ class Config:
     dup_offset: float = 10.0
     delay_mean: float = 10.0
     core_time: float = 0.01
+    repair_pass_prob: float | None = None
 
 
 @dataclass(frozen=True)
@@ -356,7 +357,10 @@ class Simulation:
         if role == "tutor":
             self.call(t, r, "validator")
             return
-        if rng(self.cfg.seed, T_PASS, r.id, n).random() < self.timing.pass_prob:
+        p_pass = self.timing.pass_prob
+        if r.repaired and self.cfg.repair_pass_prob is not None:
+            p_pass = self.cfg.repair_pass_prob
+        if rng(self.cfg.seed, T_PASS, r.id, n).random() < p_pass:
             g = rng(self.cfg.seed, T_GATE_FAULT, r.id, n)
             x, y = g.random(), g.random()
             delay = -self.cfg.delay_mean * np.log1p(-y) if x < self.cfg.fault / 2 else 0.0
