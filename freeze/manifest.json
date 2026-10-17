@@ -1,0 +1,28 @@
+{
+ "frozen": "2026-10-17",
+ "evaluation_seeds": "1001-1020",
+ "quality_seed": 4243,
+ "api_budget_usd": 2.0,
+ "files": {
+  "PROTOCOL.md": "84d1d3b7f9b6d18dd3f7142feb3ad14c78935ea8246eafd19b30f8ada9b26184",
+  "pyproject.toml": "62d58e5d7c4099e265b16e763716934ec79dd338559c75f60addc33c29bb23a8",
+  "data/corpus.json": "a2bc7bbb3061fa35f0fe4f832d3ca7f789a0e106f9b04899de1a8f293cb45733",
+  "results/timing/api_profile.json": "e44b6a0fdd12b69cd862b6542540a88592c1b373a0e879834e793ce285d0c4f9",
+  "results/timing/local_profile.json": "ba5ed58e8c90392e8be08b3a1815ef9cacc54ddb81f7f3e3ff90d2cea495890d",
+  "results/timing/openrouter_model.json": "b58d34a95209ee1a72759e17bb9c008f4989fcaaaf2820e2867fca5638d3c284",
+  "results/timing/api.jsonl": "b48c41a03ea8bf2c790cc6eb82eedbe0038ff277c589160d05aaedd20e2605fb",
+  "results/timing/local.jsonl": "010c9863dedefd3a828dff6ffbc450af9d274a334154ec99c6454bc25818a825",
+  "src/agentcc/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "src/agentcc/agents.py": "5a9939ed3d147e0452814276c55a31a5ac7ed3abc5dc9c285486be5425cd18c8",
+  "src/agentcc/audit.py": "9ced898760587e82441eea95eec513ebad599bcbf5cbad95cdac3c8ee45f7e92",
+  "src/agentcc/data.py": "c9f3a651b3957000a97a3aab96565d8c964c3f4d95bcd6620389b5be7601f347",
+  "src/agentcc/experiment.py": "b990399792e3ad312a9f7ab38ef8a489d015f11da557ac5264f0fac18478e7fa",
+  "src/agentcc/quality.py": "f47c272c6cb66f5a5bb2d2d50ebdc89eb2fba164e2d556cc2d441eba3e01cd7a",
+  "src/agentcc/sim.py": "2f73f990208acf2df8493245f030c0f5708c868c158d37fff0b14eddab7a7f68",
+  "src/agentcc/timing.py": "d974c1b460040790e9389faeba3a3503492d14ed4c25e1b230f8db0c1fe525b0"
+ },
+ "aqua_raw": {
+  "test.json": "de41581881ef95c5588c44ddc701c77fd480839241dd422a0d181262af24520c",
+  "train.json": "35b70c7cb1660c34d302bb932dfd3656ce3d05e8c982c797767fec31d7d1e0ba"
+ }
+}

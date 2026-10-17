@@ -22,7 +22,8 @@ def run(backend, corpus, out: Path):
     with out.open("a", encoding="utf-8") as f:
         for b in corpus["bank"]:
             item = test[b["test_index"]]
-            answer = item["correct"] if g.random() < 0.6 else str(g.choice([x for x in LETTERS if x != item["correct"]]))
+            wrong = [x for x in LETTERS if x != item["correct"]]
+            answer = item["correct"] if g.random() < 0.6 else str(g.choice(wrong))
             if b["bank_id"] in done:
                 continue
             ps = [passages[p] for p in b["deps"]]
