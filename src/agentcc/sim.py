@@ -67,6 +67,13 @@ class Timing:
     pass_prob: float
 
     @staticmethod
+    def from_profile(path):
+        import json
+
+        d = json.loads(open(path).read())
+        return Timing(d["backend"], tuple(d["tutor"]), tuple(d["validator"]), float(d["pass_prob"]))
+
+    @staticmethod
     def synthetic(name="dev", tutor_median=4.0, validator_median=2.0, sigma=0.4, pass_prob=0.9, n=200, seed=1):
         g = np.random.default_rng(seed)
         return Timing(
@@ -84,10 +91,13 @@ class Bank:
     deps: list[tuple[int, ...]]
 
 
-def make_bank(cfg: Config) -> Bank:
+def make_bank(cfg: Config, item_deps=None) -> Bank:
+    """item_deps: passage IDs per item from the evidence corpus; without them, a synthetic Zipf graph (development)."""
     g = rng(cfg.bank_seed, T_BANK)
     b = g.uniform(-2.0, 2.0, cfg.n_items)
     a = g.uniform(0.5, 2.0, cfg.n_items)
+    if item_deps is not None:
+        return Bank(b, a, [(k, *sorted(cfg.n_items + int(p) for p in item_deps[k])) for k in range(cfg.n_items)])
     w = 1.0 / np.arange(1, cfg.n_passages + 1) ** cfg.zipf
     w /= w.sum()
     deps = []
@@ -132,10 +142,12 @@ def response_time(cfg: Config, u: int, d: int) -> float:
     return float(cfg.rt_median * np.exp(cfg.rt_sigma * rng(cfg.seed, T_RT, u, d).standard_normal()))
 
 
-def revision_ledger(cfg: Config, t_end: float, n_objects: int):
+def revision_ledger(cfg: Config, t_end: float, n_objects: int, active=None):
     ledger = []
     for o in range(n_objects):
         rate = (cfg.rho_item if o < cfg.n_items else cfg.rho_passage) / 3600.0
+        if active is not None and o not in active:
+            rate = 0.0
         g = rng(cfg.seed, T_REVISION, o)
         t, revs = 0.0, []
         while rate > 0:
@@ -166,6 +178,7 @@ class Request:
     regenerations: int = 0
     unchanged_regeneration: bool = False
     end: float | None = None
+    deliver_step: int | None = None
     delivered: bool = False
     fresh: bool | None = None
     valid: bool | None = None
@@ -174,18 +187,21 @@ class Request:
 
 
 class Simulation:
-    def __init__(self, cfg: Config, timing: Timing):
+    def __init__(self, cfg: Config, timing: Timing, item_deps=None):
         if cfg.condition not in CONDITIONS:
             raise ValueError(cfg.condition)
         self.cfg, self.timing = cfg, timing
-        self.bank = make_bank(cfg)
+        self.bank = make_bank(cfg, item_deps)
         self.n_objects = cfg.n_items + cfg.n_passages
         starts, ends = learner_timeline(cfg)
         self.starts = starts
         self.horizon = max(ends) + cfg.drain
-        self.ledger = revision_ledger(cfg, self.horizon, self.n_objects)
+        active = {o for d in self.bank.deps for o in d}
+        self.ledger = revision_ledger(cfg, self.horizon, self.n_objects, active)
         self.version = [0] * self.n_objects
         self.applied_at = [[] for _ in range(self.n_objects)]
+        self.applied_step = [[] for _ in range(self.n_objects)]
+        self.step = 0
         self.readers = [set() for _ in range(self.n_objects)]
         self.writers = [deque() for _ in range(self.n_objects)]
         self.waiting = [[] for _ in range(self.n_objects)]
@@ -217,6 +233,7 @@ class Simulation:
             t, _, _, fn, args = heapq.heappop(self.heap)
             if t > self.horizon:
                 break
+            self.step += 1
             fn(t, *args)
         return self.summary_records()
 
@@ -271,6 +288,7 @@ class Simulation:
     def apply_revision(self, t, o):
         self.version[o] += 1
         self.applied_at[o].append(t)
+        self.applied_step[o].append(self.step)
 
     def drain_writers(self, t, o):
         while self.writers[o] and not self.readers[o]:
@@ -360,6 +378,7 @@ class Simulation:
                 self.finish(t, r, "abstain_stale")
             return
         r.delivered = True
+        r.deliver_step = self.step
         r.fresh = not stale
         unreflected = self.unreflected(t, r)
         r.valid = not any(inv for _, inv in unreflected)
@@ -395,6 +414,8 @@ class Simulation:
                 "timely": r.delivered and r.end - r.arrival <= cfg.deadline,
                 "budget_calls": r.calls, "started_calls": r.started, "completed_calls": r.completed_calls,
                 "regenerations": r.regenerations, "unchanged_regeneration": r.unchanged_regeneration,
+                "snapshot": [[o, r.snapshot[o]] for o in r.deps] if r.delivered else None,
+                "deliver_step": r.deliver_step,
             })
         first = min(r.arrival for r in self.requests)
         last = max(r.arrival for r in self.requests)
@@ -412,9 +433,10 @@ class Simulation:
             "regret": float(np.mean(self.regret)), "rmse": rmse,
             "double_commits": int(sum(self.commit_count) - sum(len(c) for c in self.committed)),
             "revision_cohort": cohort, "revisions": sum(len(v) for v in self.ledger), "horizon": self.horizon,
+            "ledger": self.ledger, "applied_at": self.applied_at, "applied_step": self.applied_step,
         }
         return rows, extra
 
 
-def simulate(cfg: Config, timing: Timing):
-    return Simulation(cfg, timing).run()
+def simulate(cfg: Config, timing: Timing, item_deps=None):
+    return Simulation(cfg, timing, item_deps).run()

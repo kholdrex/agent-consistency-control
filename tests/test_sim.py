@@ -54,3 +54,20 @@ def test_call_budget_respected():
 def test_same_request_stream_across_conditions():
     ids = [[(r["id"], r["arrival"]) for r in run(c, rho_item=5, rho_passage=5)[0]] for c in ("C1", "C2", "C3")]
     assert ids[0] == ids[1] == ids[2]
+
+
+def test_independent_audit_agrees_with_gate():
+    from agentcc.audit import check
+
+    for c in ("C1", "C2", "C3"):
+        rows, extra = run(c, rho_item=50, rho_passage=50)
+        assert all(v == 0 for v in check(rows, extra, c).values())
+
+
+def test_final_letter_is_strict():
+    from agentcc.agents import final_letter
+
+    assert final_letter("Work.\nFinal answer: C") == "C"
+    assert final_letter("Work.\n**Final answer: (B)**") == "B"
+    assert final_letter("Work.\nFinal answer: Cannot determine") is None
+    assert final_letter("Final answer: A\nmore text") is None
