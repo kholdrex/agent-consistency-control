@@ -117,7 +117,7 @@ def figure(cell_rows, path):
 
     styles = {"C1": ("o", "-", "0.0"), "C2": ("s", "--", "0.3"), "C3": ("^", ":", "0.45")}
     names = {"C1": "C1, state only", "C2": "C2, optimistic", "C3": "C3, pessimistic"}
-    plt.rcParams.update({"font.family": "Times New Roman", "font.size": 11})
+    plt.rcParams.update({"font.family": "Times New Roman", "font.size": 10})
     fig, axes = plt.subplots(2, 2, figsize=(17 / 2.54, 11.5 / 2.54), sharex=True)
     plain = ticker.FuncFormatter(lambda v, _: f"{v:g}")
     for j, ld in enumerate((0.5, 0.85)):
@@ -126,10 +126,10 @@ def figure(cell_rows, path):
                         key=lambda r: r["lambda"])
             x = [r["lambda"] for r in rs]
             axes[0, j].plot(x, [100 * r["tvf"][0] for r in rs], marker=mk, ls=ls, color=col, label=names[c], ms=5,
-                            lw=1.4)
-            axes[1, j].plot(x, [r["latency_p95"][0] for r in rs], marker=mk, ls=ls, color=col, ms=5, lw=1.4)
-        axes[0, j].set_title(f"({'ab'[j]}) utilisation {ld}", fontsize=11)
-        axes[1, j].set_title(f"({'cd'[j]}) utilisation {ld}", fontsize=11)
+                            lw=2)
+            axes[1, j].plot(x, [r["latency_p95"][0] for r in rs], marker=mk, ls=ls, color=col, ms=5, lw=2)
+        axes[0, j].set_title(f"({'ab'[j]}) utilisation {ld}", fontsize=10)
+        axes[1, j].set_title(f"({'cd'[j]}) utilisation {ld}", fontsize=10)
         axes[1, j].set_xlabel("Corrections per object-hour")
         if ld == 0.85:
             axes[1, j].set_yscale("log")
