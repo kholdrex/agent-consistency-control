@@ -112,3 +112,6 @@ ZNO and WebFAQ data; earlier measurements.
 ## 9. Deviations
 
 Any change after the first evaluation run is listed here with its date and reason.
+
+- 2026-10-17: src/agentcc/analysis.py (primary contrast, cell table, checks, figure) and src/agentcc/quality.py were written after the
+  freeze and before any evaluation result was read; they implement sections 6 and 7 as written.
