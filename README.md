@@ -3,6 +3,8 @@
 Code, data selection, measurements and results for the study *Consistency control for language-model agents in adaptive
 assessment* (O. Kholodniak).
 
+Archived on Zenodo: [doi:10.5281/zenodo.23430071](https://doi.org/10.5281/zenodo.23430071).
+
 Tutor and validator agents prepare feedback on a learner's answer to an algebra item while the items and the reference
 passages they depend on are being corrected. Three disciplines are compared on one request stream: checking only the learner
 state (C1), rechecking the versions of the item and the passages at delivery with one regeneration (C2, optimistic) and locking

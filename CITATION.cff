@@ -9,6 +9,7 @@ authors:
 version: 1.0.0
 date-released: 2026-10-17
 license: MIT
+doi: 10.5281/zenodo.23430071
 repository-code: "https://github.com/kholdrex/agent-consistency-control"
 keywords:
   - language-model agents
