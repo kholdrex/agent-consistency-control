@@ -42,7 +42,8 @@ reported only as a diagnostic and is identical for C1-C3 by construction.
 - For each backend: 3 warm-up calls, then 30 sequential tutor + validator calls, then 32 tutor calls at concurrency 4.
 - API profile (measured 2026-10-17): tutor mean 1.49 s (median 1.53 s), validator mean 1.00 s (median 1.02 s), validator pass rate 0.80
   (unchanged after the final-answer parser was made strict; pass rates are recomputed from the logged texts, no new calls), throughput ratio
-  at concurrency 4 = 4.10 (no measurable contention), cost USD 0.04. Local profile: results/timing/local_profile.json.
+  at concurrency 4 = 4.10 (no measurable contention), cost USD 0.04. Local profile: tutor mean 12.77 s, validator mean 5.36 s, validator pass
+  rate 0.77 with the strict parser (0.83 with the initial one), throughput ratio 1.12 (results/timing/local_profile.json).
 - The simulator draws service times from the 30 measured sequential values of each role; injected transport delays are added separately.
 
 ## 4. Simulation (Experiment 1)
@@ -71,8 +72,10 @@ replication with K = 4 (offered demand (1.4935 + 1.0005) x 1.2 = 2.993 worker-se
 requests of one learner 45 exp(0.125) + 0.15 x 10 + 0.01 = 52.50 s; utilisation 0.499 and 0.855); conditions
 C1, C2, C3 (C0 at lambda = 0 only); world W1; 20 replications with seeds 1001-1020 (development used seeds 1-99 and synthetic timing). The
 same replication seed gives the same learners, answers, faults and corrections in every condition. Corrections are generated only for
-objects referenced by evaluation items (200 items, 568 passages). Descriptive extensions: W2, and the local timing profile with the same
-workload (35 and 60 learners, K = 4), i.e. at the higher utilisation implied by its slower service.
+objects referenced by evaluation items (200 items, 568 passages). Descriptive extension: W2. The local profile is not simulated: measured
+on the laptop, it serves requests essentially one at a time (throughput ratio 1.12 at concurrency 4) with a mean demand of
+(12.77 + 5.36) x 1.2 = 21.8 s per request, i.e. about 1.2 and 2.0 learners at utilisation 0.5 and 0.85; this capacity is reported
+descriptively.
 
 ## 5. Measures (per replication, ratios of totals over all feedback requests)
 
